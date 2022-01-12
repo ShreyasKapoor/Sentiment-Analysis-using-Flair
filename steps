@@ -1,0 +1,24 @@
+login into docker : docker login
+build an image : docker build -t worker . --platform linux/amd64
+check if the image has been created : docker images | grep worker
+tag the image : docker tag 132fb7a5ba97 shreyaskapoor2/worker
+push the image : docker push shreyaskapoor2/worker 
+
+After all the images has been pushed, run the deploy-all file - sh deploy-all.sh
+this will start all the deployment, service and ingress
+
+We need to do port forwarding affter this. This is to let redis, rabbitmq and rest-frontend be available
+
+
+sh deploy-all.sh
+kubectl port-forward --address 0.0.0.0 service/rabbitmq 5672:5672 &
+kubectl port-forward --address 0.0.0.0 service/redis 6379:6379 &
+kubectl port-forward svc/rest-frontend 7777:80
+
+kubectl create clusterrolebinding cluster-admin-binding --clusterrole cluster-admin --user $(gcloud config get-value account)
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.4/deploy/static/provider/cloud/deploy.yaml
+kubectl describe ingress rest-ingress
+
+
+Under the tag Address: you should find the external ip copy that and put it in sample-request.sh. Then run the sh sand you should get the https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.4/deploy/static/provider/cloud/deploy.yaml

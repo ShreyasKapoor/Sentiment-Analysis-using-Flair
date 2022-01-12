@@ -1,0 +1,19 @@
+##
+## You provide this
+##
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: rest-ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /$1
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          serviceName: rest-frontend
+          servicePort: 5001
